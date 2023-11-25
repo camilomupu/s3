@@ -1,10 +1,13 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.responses import FileResponse
 from typing import List
-from archivos import s3
+from archivos import upload_file
+import requests
 
 app = FastAPI()
 
 @app.post("/file/")
-def upload_file(file: UploadFile = File(...)):
-    s3.Bucket('libramanage').put_object(Key=file.filename, Body=file.file)
+async def upload_files(file: UploadFile = File(...)):
+    url_archivo_subido = await upload_file(file)
+    return {"url": url_archivo_subido}
+    
